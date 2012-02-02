@@ -1,5 +1,5 @@
 #include "testApp.h"
-
+#include <iostream>e
 extern "C" {
 #include "macGlutfix.h"
 }
@@ -18,6 +18,7 @@ void testApp::setup(){
 	image.allocate(captureWidth, captureHeight, OF_IMAGE_COLOR);
 	//pixels.allocate(captureWidth, captureHeight, OF_IMAGE_COLOR);
 	
+    blameText.loadImage("blame.png");
 	ofSetFrameRate(30);
 
 }
@@ -55,19 +56,34 @@ void testApp::update(){
 	//cout << imageBelowWindow()[0] << endl;
 	
 	
-
+//        cout << "hi" << endl;
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
 	image.draw(0,0, ofGetWidth(), ofGetHeight());
-	
-	ofNoFill();
-	
+
+    ofNoFill();
+    
 	//for each face "blob" we found, draw a rectangle around the face
-    //#2
 	for(int i = 0; i < finder.blobs.size(); i++) {
-		ofRect(finder.blobs[i].boundingRect);
+
+        ofRectangle face = finder.blobs[i].boundingRect;
+        
+        ofColor blame;
+        blame.r = 255;
+        blame.b = 0;
+        blame.g = 0;
+        
+        ofSetColor(blame.r, blame.g, blame.b);
+        ofFill();
+        ofEllipse(face.x, face.y, 10, 10);
+        ofNoFill();
+        ofSetColor(255,255,255);
+        
+        ofEnableAlphaBlending();
+        blameText.draw(face.x - blameText.width, face.y);
+        ofDisableAlphaBlending();
 	}
 	
 }
