@@ -9,6 +9,6 @@ xcuserdata/
 
 .svn/
 obj/
-bin/
+bin/*
 build/
-!data/
+!bin/data/
