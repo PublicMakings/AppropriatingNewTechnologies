@@ -1,4 +1,4 @@
-*.depend
+.depend
 *.layout
 *.mode*v3
 *.pbxuser
@@ -11,4 +11,3 @@ xcuserdata/
 obj/
 bin/
 build/
-!data/
