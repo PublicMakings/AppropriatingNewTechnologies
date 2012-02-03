@@ -65,8 +65,6 @@ void testApp::draw(){
 
         ofRectangle face = finder.blobs[i].boundingRect;
         
-        ofRect(face);
-        
         ofColor blame;
         blame.r = 255;
         blame.b = 0;
@@ -74,12 +72,13 @@ void testApp::draw(){
         
         ofSetColor(blame.r, blame.g, blame.b);
         ofFill();
-        ofEllipse(face.x, face.y, 10, 10);
+        
         ofNoFill();
         ofSetColor(255,255,255);
-        
+
         ofEnableAlphaBlending();
-        blameText.draw(face.x - blameText.width, face.y);
+//        blameText.draw(face.x - blameText.width, face.y);
+        blameText.draw(face.x, face.y);
         ofDisableAlphaBlending();
 	}
 	
