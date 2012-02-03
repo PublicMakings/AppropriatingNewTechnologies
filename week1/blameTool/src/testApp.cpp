@@ -26,7 +26,7 @@ void testApp::setup(){
 	finder.setup("haarcascade_frontalface_default.xml");
 
     // why not?
-    ofSetVerticalSync(true);
+//    ofSetVerticalSync(true);
 	
     image.allocate(captureWidth, captureHeight, OF_IMAGE_COLOR);
 	//pixels.allocate(captureWidth, captureHeight, OF_IMAGE_COLOR);
@@ -48,8 +48,8 @@ void testApp::update(){
 		unsigned char * pixels = vidGrabber.getPixels();
         // now, let's get the R and B data swapped, so that it's all OK:
         image.setFromPixels(pixels, camWidth, camHeight, OF_IMAGE_COLOR, true);
-        image.setImageType(OF_IMAGE_COLOR);
         image.update();
+        // send this frame of video through haar detection
         finder.findHaarObjects(image);
 	}
 }
@@ -60,25 +60,33 @@ void testApp::draw(){
 
     ofNoFill();
     
-	//for each face "blob" we found, draw a rectangle around the face
+	// for each face "blob" we found, draw a rectangle around the face
 	for(int i = 0; i < finder.blobs.size(); i++) {
 
         ofRectangle face = finder.blobs[i].boundingRect;
         
-        ofColor blame;
-        blame.r = 255;
-        blame.b = 0;
-        blame.g = 0;
-        
-        ofSetColor(blame.r, blame.g, blame.b);
+        ofSetColor(255, 0, 0);
         ofFill();
-        
+
         ofNoFill();
         ofSetColor(255,255,255);
 
+        float blamex;
+        float blamey;
+        int padding = 10;
+
+        if(face.x + face.width/2 < ofGetWidth()/2) {
+            blamex = face.x + face.width + padding; }
+        else {
+            blamex = face.x - blameText.width - padding; }
+        
+        if(face.y + face.height/2 < ofGetHeight()/2) {
+            blamey = face.y; }
+        else {
+            blamey = face.y - blameText.height; }
+        
         ofEnableAlphaBlending();
-//        blameText.draw(face.x - blameText.width, face.y);
-        blameText.draw(face.x, face.y);
+        blameText.draw(blamex, blamey);
         ofDisableAlphaBlending();
 	}
 	
