@@ -1,5 +1,5 @@
 #include "testApp.h"
-#include <iostream>e
+
 extern "C" {
 #include "macGlutfix.h"
 }
@@ -11,11 +11,24 @@ void testApp::setup(){
     captureWidth = ofGetWidth();
     captureHeight = ofGetHeight();
     
+    // try to grab web cam at this size
+    camWidth = 400;
+    camHeight = 300;
+    
+    // get ready to grab the video at the desired size.
+    vidGrabber.setVerbose(true);
+    vidGrabber.initGrabber(camWidth, camHeight);
+    
+    // I don't know what this line does, just copying it from the movieGrabberExample
+    videoTexture.allocate(camWidth, camHeight, GL_RGB);
+    
+    // setup the Haar face-finder
 	finder.setup("haarcascade_frontalface_default.xml");
-	//CGContextRef cgctx = NULL;
-	//ofSetVerticalSync(true);
-	//tex.allocate(captureWidth, captureHeight, GL_RGBA);
-	image.allocate(captureWidth, captureHeight, OF_IMAGE_COLOR);
+
+    // why not?
+    ofSetVerticalSync(true);
+	
+    image.allocate(captureWidth, captureHeight, OF_IMAGE_COLOR);
 	//pixels.allocate(captureWidth, captureHeight, OF_IMAGE_COLOR);
 	
     blameText.loadImage("blame.png");
@@ -29,39 +42,21 @@ void testApp::update(){
     captureWidth = ofGetWidth();
     captureHeight = ofGetHeight();
     
-	unsigned char * data = pixelsBelowWindow(ofGetWindowPositionX(), ofGetWindowPositionY(), captureWidth, captureHeight);
+    vidGrabber.grabFrame();
 	
-	// now, let's get the R and B data swapped, so that it's all OK:
-	for (int i = 0; i < captureWidth * captureHeight; i++){
-		
-		unsigned char r = data[i*4]; // mem A  
-		
-		data[i*4]   = data[i*4+1];   
-		data[i*4+1] = data[i*4+2];   
-		data[i*4+2] = data[i*4+3];   
-		data[i*4+3] = r; 
+    if (vidGrabber.isFrameNew()){
+		unsigned char * pixels = vidGrabber.getPixels();
+        // now, let's get the R and B data swapped, so that it's all OK:
+        image.setFromPixels(pixels, camWidth, camHeight, OF_IMAGE_COLOR, true);
+        image.setImageType(OF_IMAGE_COLOR);
+        image.update();
+        finder.findHaarObjects(image);
 	}
-	
-	
-	if (data!= NULL) {
-		//tex.loadData(data, captureWidth, captureHeight, GL_RGBA);
-		//tex.readToPixels(pixels);
-		//image = pixels;
-		image.setFromPixels(data, captureWidth, captureHeight, OF_IMAGE_COLOR_ALPHA, true);
-		image.setImageType(OF_IMAGE_COLOR);
-		image.update();
-		finder.findHaarObjects(image.getPixelsRef());
-		
-	}
-	//cout << imageBelowWindow()[0] << endl;
-	
-	
-//        cout << "hi" << endl;
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	image.draw(0,0, ofGetWidth(), ofGetHeight());
+    image.draw(0,0);
 
     ofNoFill();
     
@@ -69,6 +64,8 @@ void testApp::draw(){
 	for(int i = 0; i < finder.blobs.size(); i++) {
 
         ofRectangle face = finder.blobs[i].boundingRect;
+        
+        ofRect(face);
         
         ofColor blame;
         blame.r = 255;

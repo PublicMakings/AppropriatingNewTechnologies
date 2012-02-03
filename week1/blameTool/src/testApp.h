@@ -20,13 +20,19 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
+        // will probably be removed in favor of camWidth/camHeight
+        // since I am no longer captureing anything.
         int captureWidth;
         int captureHeight;
-    
-		//ofTexture	tex;
-		//ofPixels	pixels;
+
+        // Variables for webCam
+        ofVideoGrabber 		vidGrabber;
+        unsigned char * 	videoInverted;
+        ofTexture			videoTexture;
+        int 				camWidth;
+        int 				camHeight;
+
 		ofImage		image;
         ofImage     blameText;
 		ofxCvHaarFinder finder;	 // object used to detect haar features
-
 };
