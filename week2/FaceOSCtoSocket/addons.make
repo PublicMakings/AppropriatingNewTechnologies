@@ -1,0 +1,5 @@
+ofxCv
+ofxFaceTracker
+ofxOsc
+ofxXmlSettings
+ofxWebSocketServer
