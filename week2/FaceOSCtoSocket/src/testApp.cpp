@@ -160,18 +160,41 @@ void testApp::update() {
 			addMessage("/pose/scale", scale);
 			ofVec3f orientation = tracker.getOrientation();
 			addMessage("/pose/orientation", orientation);
+            
             ofPolyline righteye = tracker.getImageFeature(ofxFaceTracker::RIGHT_EYE);
             ofPoint rep = righteye.getVertices()[0];
-            addMessage("/feature/theface", rep.x);
+            addMessage("/feature/eye/right", rep);
             
-			addMessage("/gesture/mouth/width", tracker.getGesture(ofxFaceTracker::MOUTH_WIDTH));
-			addMessage("/gesture/mouth/height", tracker.getGesture(ofxFaceTracker::MOUTH_HEIGHT));
-			addMessage("/gesture/eyebrow/left", tracker.getGesture(ofxFaceTracker::LEFT_EYEBROW_HEIGHT));
-			addMessage("/gesture/eyebrow/right", tracker.getGesture(ofxFaceTracker::RIGHT_EYEBROW_HEIGHT));
-			addMessage("/gesture/eye/left", tracker.getGesture(ofxFaceTracker::LEFT_EYE_OPENNESS));
-			addMessage("/gesture/eye/right", tracker.getGesture(ofxFaceTracker::RIGHT_EYE_OPENNESS));
-			addMessage("/gesture/jaw", tracker.getGesture(ofxFaceTracker::JAW_OPENNESS));
-			addMessage("/gesture/nostrils", tracker.getGesture(ofxFaceTracker::NOSTRIL_FLARE));
+            ofPolyline lefteye = tracker.getImageFeature(ofxFaceTracker::LEFT_EYE);
+            ofPoint left = lefteye.getVertices()[0];
+            addMessage("/feature/eye/left", left);
+
+            ofPolyline righteybrow = tracker.getImageFeature(ofxFaceTracker::RIGHT_EYEBROW);
+            ofPoint reb = righteybrow.getVertices()[0];
+            addMessage("/feature/eyebrow/right", reb);
+            
+			ofPolyline lefteyebrow = tracker.getImageFeature(ofxFaceTracker::LEFT_EYEBROW);
+            ofPoint leb = lefteyebrow.getVertices()[0];
+            addMessage("/feature/eyebrow/left", leb);
+            
+            ofPolyline outermouth = tracker.getImageFeature(ofxFaceTracker::OUTER_MOUTH);
+            ofPoint om = outermouth.getVertices()[0];
+            addMessage("/features/mouth/outer", om);
+            
+            ofPolyline innermouth = tracker.getImageFeature(ofxFaceTracker::INNER_MOUTH);
+            ofPoint im = innermouth.getVertices()[0];
+            addMessage("/features/mouth/inner", im);
+            
+            addMessage("/feature/eyebrow/length", (int)lefteyebrow.getVertices().size());
+            
+//          addMessage("/gesture/mouth/width", tracker.getGesture(ofxFaceTracker::MOUTH_WIDTH));
+//			addMessage("/gesture/mouth/height", tracker.getGesture(ofxFaceTracker::MOUTH_HEIGHT));
+//			addMessage("/gesture/eyebrow/left", tracker.getGesture(ofxFaceTracker::LEFT_EYEBROW_HEIGHT));
+//			addMessage("/gesture/eyebrow/right", tracker.getGesture(ofxFaceTracker::RIGHT_EYEBROW_HEIGHT));
+//			addMessage("/gesture/eye/left", tracker.getGesture(ofxFaceTracker::LEFT_EYE_OPENNESS));
+//			addMessage("/gesture/eye/right", tracker.getGesture(ofxFaceTracker::RIGHT_EYE_OPENNESS));
+//			addMessage("/gesture/jaw", tracker.getGesture(ofxFaceTracker::JAW_OPENNESS));
+//			addMessage("/gesture/nostrils", tracker.getGesture(ofxFaceTracker::NOSTRIL_FLARE));
 		} else {
 			addMessage("/found", 0);
 		}
@@ -194,12 +217,6 @@ void testApp::draw() {
 		tracker.getImageMesh().drawWireframe();
 
 		ofPushView();
-        ofPolyline righteye = tracker.getImageFeature(ofxFaceTracker::RIGHT_EYE);
-        ofPoint rep = righteye.getVertices()[0];
-        ofSetColor(255);
-        ofFill();
-        ofEllipse(rep.x, rep.y, 10, 10);
-        ofNoFill();
 		ofSetupScreenOrtho(sourceWidth, sourceHeight, OF_ORIENTATION_UNKNOWN, true, -1000, 1000);
 		ofVec2f pos = tracker.getPosition();
 		ofTranslate(pos.x, pos.y);
