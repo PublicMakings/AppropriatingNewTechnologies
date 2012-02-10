@@ -154,14 +154,16 @@ void testApp::update() {
 
 		if(tracker.getFound()) {
 			addMessage("/found", 1);
-
 			ofVec2f position = tracker.getPosition();
 			addMessage("/pose/position", position);
 			scale = tracker.getScale();
 			addMessage("/pose/scale", scale);
 			ofVec3f orientation = tracker.getOrientation();
 			addMessage("/pose/orientation", orientation);
-
+            ofPolyline righteye = tracker.getImageFeature(ofxFaceTracker::RIGHT_EYE);
+            ofPoint rep = righteye.getVertices()[0];
+            addMessage("/feature/theface", rep.x);
+            
 			addMessage("/gesture/mouth/width", tracker.getGesture(ofxFaceTracker::MOUTH_WIDTH));
 			addMessage("/gesture/mouth/height", tracker.getGesture(ofxFaceTracker::MOUTH_HEIGHT));
 			addMessage("/gesture/eyebrow/left", tracker.getGesture(ofxFaceTracker::LEFT_EYEBROW_HEIGHT));
@@ -192,6 +194,12 @@ void testApp::draw() {
 		tracker.getImageMesh().drawWireframe();
 
 		ofPushView();
+        ofPolyline righteye = tracker.getImageFeature(ofxFaceTracker::RIGHT_EYE);
+        ofPoint rep = righteye.getVertices()[0];
+        ofSetColor(255);
+        ofFill();
+        ofEllipse(rep.x, rep.y, 10, 10);
+        ofNoFill();
 		ofSetupScreenOrtho(sourceWidth, sourceHeight, OF_ORIENTATION_UNKNOWN, true, -1000, 1000);
 		ofVec2f pos = tracker.getPosition();
 		ofTranslate(pos.x, pos.y);
