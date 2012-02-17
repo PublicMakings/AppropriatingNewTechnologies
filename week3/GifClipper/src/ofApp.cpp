@@ -42,22 +42,10 @@ void ofApp::setup() {
 			for(int x = 0; x < pix.getWidth(); x++) {
 				ofColor cur = pix.getColor(x, y);
                 ofColor clip = clips.getColor(x, y);
-                
-                // Debug, change colors every 3
-//                if ( i % 3 == 0 ) {
-//                    cur.r = 255;
-//                    cur.b = 0;
-//                    cur.g = 0;
-//                } else if (i % 3 == 1) {
-//                    cur.r = 0;
-//                    cur.b = 255;
-//                    cur.g = 0;
-//                }
+
                 cur.a = cur.getBrightness();
                 if( clip.getBrightness() == 255 ) {
                     cur.a = 0;
-                } else {
-                    cur.a = clip.getBrightness();
                 }
 				pix.setColor(x, y, cur);
 			}
