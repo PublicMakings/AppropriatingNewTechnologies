@@ -9,5 +9,6 @@ public:
 	void draw();
 	
 	ofEasyCam cam;
-	vector<ofImage> slices;
+	vector<ofImage> displaySlices;
+    vector<ofImage> clippingSlices;
 };

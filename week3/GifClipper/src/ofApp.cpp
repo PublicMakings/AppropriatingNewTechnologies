@@ -1,32 +1,69 @@
 #include "ofApp.h"
 
-// save http://i.imgur.com/ym71g.gif as data/body.gif
-
 void ofApp::setup() {
 	ofSetVerticalSync(true);
-	ofVideoPlayer body;
-	body.loadMovie("cc3.gif");
-	int n = body.getTotalNumFrames();
-	for(int i = 0; i < n; i++) {
-		// load and save the current frame
-		body.setFrame(i);
-		slices.push_back(body.getPixelsRef());
-		// process each slice so the brightness determines the alpha
-		slices.back().setImageType(OF_IMAGE_COLOR_ALPHA); // RGB -> RGBA
-		ofPixels& pix = slices.back().getPixelsRef();
+	    
+    // These two gifs are the same size and same number of frames.
+	ofVideoPlayer mask, content;
+    mask.loadMovie("cc3-square.gif");
+    content.loadMovie("stars.gif");
+    
+    // Just to make sure...
+	int n = mask.getTotalNumFrames();
+    int m = content.getTotalNumFrames();
+    
+    int maxFrames = n;
+    if(n - m > 0) {
+        maxFrames = m;
+    }
+    
+	for(int i = 0; i < maxFrames; i++) {
+        // This command gets the ith frame of the gif/movie and
+        // makes it accessible by calling <video>.getPixelsRef()
+		mask.setFrame(i);
+        content.setFrame(i);
+
+        // Add a reference to the pixels of the current frame to
+        // the end of each vector of images. 
+        displaySlices.push_back(content.getPixelsRef());
+        clippingSlices.push_back(mask.getPixelsRef());
+		
+        // Convert the image type of the last element of the vector
+        // to include an alpha channel.
+        // I don't need to do this to the clipping mask as its 
+        // brightness levels will set the alpha channel on the display
+        // slices.
+		displaySlices.back().setImageType(OF_IMAGE_COLOR_ALPHA); // RGB -> RGBA
+        
+		ofPixels& pix = displaySlices.back().getPixelsRef();
+        ofPixels& clips = clippingSlices.back().getPixelsRef();
+        
 		for(int y = 0; y < pix.getHeight(); y++) {
 			for(int x = 0; x < pix.getWidth(); x++) {
 				ofColor cur = pix.getColor(x, y);
-                if( cur.getBrightness() == 255 ) {
+                ofColor clip = clips.getColor(x, y);
+                
+                // Debug, change colors every 3
+//                if ( i % 3 == 0 ) {
+//                    cur.r = 255;
+//                    cur.b = 0;
+//                    cur.g = 0;
+//                } else if (i % 3 == 1) {
+//                    cur.r = 0;
+//                    cur.b = 255;
+//                    cur.g = 0;
+//                }
+                cur.a = cur.getBrightness();
+                if( clip.getBrightness() == 255 ) {
                     cur.a = 0;
                 } else {
-                    cur.a = cur.getBrightness();
+                    cur.a = clip.getBrightness();
                 }
 				pix.setColor(x, y, cur);
 			}
 		}
 		// update the ofImage (upload ofPixels to ofTexture)
-		slices.back().update();
+		displaySlices.back().update();
 	}
 	ofEnableAlphaBlending();
 }  
@@ -39,8 +76,8 @@ void ofApp::draw() {
 	cam.begin();
 	ofSetColor(255, 64); // make everything more transparent
 	float spacing = 8;
-	ofTranslate(-slices[0].getWidth() / 2, -slices[0].getHeight() / 2, -spacing * slices.size() / 2); // center things
-	for(int i = 0; i < slices.size(); i++) {
+	ofTranslate(-displaySlices[0].getWidth() / 2, -displaySlices[0].getHeight() / 2, -spacing * displaySlices.size() / 2); // center things
+	for(int i = 0; i < displaySlices.size(); i++) {
 		ofPushMatrix();
 		
 		// space the slices out evenly on the z axis
@@ -51,7 +88,7 @@ void ofApp::draw() {
 		float noiseScale = 10;
 		ofTranslate(ofSignedNoise(noiseOffset, 0) * noiseScale, ofSignedNoise(0, noiseOffset) * noiseScale, 0);
 		
-		slices[i].draw(0, 0);
+		displaySlices[i].draw(0, 0);
 		ofPopMatrix();
 	}
 	cam.end();
