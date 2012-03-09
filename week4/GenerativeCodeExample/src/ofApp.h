@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "OneLiner.h"
+#include "ofxOsc.h"
 
 class ofApp : public ofBaseApp {
 public:
@@ -19,4 +20,7 @@ public:
 	unsigned long time;
 	unsigned int rateDivider;
 	int curCount;
+    
+    ofxOscReceiver osc;
+    int blinkState;
 };

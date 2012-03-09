@@ -19,10 +19,23 @@ void ofApp::setup() {
 	time = 0;
 	rateDivider = 8;
 	curCount = 0;
+    osc.setup(8338);
 }
 
 void ofApp::update() {
-	keyPressed(' ');
+//	keyPressed(' ');
+    while(osc.hasWaitingMessages()) {
+        ofxOscMessage message;
+        osc.getNextMessage(&message);
+        if ( message.getAddress() =="/gesture/blink" )
+		{
+			// both the arguments are int32's
+            blinkState = message.getArgAsInt32(0);
+		}
+    }
+    if (blinkState == 1) {
+//        keyPressed(' ');
+    }
 }
 
 void ofApp::draw() {
@@ -53,6 +66,7 @@ void ofApp::keyPressed(int key) {
 }
 
 void ofApp::audioOut(float* input, int n, int channels) {
+    	if(blinkState == 1) {
 	unsigned char* pixels = audioPixels.getPixels();
 	int wh = audioPixels.getWidth() * audioPixels.getHeight();
 	int cwh = audioPixels.getNumChannels() * wh;
@@ -68,4 +82,5 @@ void ofApp::audioOut(float* input, int n, int channels) {
 			time++;
 		}
 	}
+        }
 }
