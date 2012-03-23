@@ -1,0 +1,3 @@
+[submodule "week7/faceDOM"]
+	path = week7/faceDOM
+	url = git@github.com:stevenklise/faceDOM.git
